@@ -34,7 +34,7 @@ class GrapplingTask extends PluginTask
     /**
      * @param $currentTick
      */
-    public function onRun(int $currentTick)
+    public function onRun($currentTick)
     {
         $location = $this->location;
         $entityloc = $this->entity->getPosition();
