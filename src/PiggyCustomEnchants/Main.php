@@ -302,7 +302,7 @@ class Main extends PluginBase
                 if (is_numeric($enchant)) {
                     $enchant = CustomEnchants::getEnchantment((int)$enchant);
                 } else {
-                    $enchant = CustomEnchants::getEnchantmentByName($enchant);
+                    $enchant = CustomEnchants::getEnchantByName($enchant);
                 }
             }
             if ($enchant == null) {
