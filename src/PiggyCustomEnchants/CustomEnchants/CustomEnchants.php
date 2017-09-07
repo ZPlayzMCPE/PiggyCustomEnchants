@@ -32,7 +32,6 @@ class CustomEnchants extends Enchantment
     const DISARMING = 117;
     const SOULBOUND = 118;
     const HALLUCINATION = 119;
-
     //TOOLS
     const EXPLOSIVE = 200; //Not accurate
     const SMELTING = 201;
@@ -41,7 +40,6 @@ class CustomEnchants extends Enchantment
     const LUMBERJACK = 204;
     const TELEPATHY = 205;
     const DRILLER = 206;
-
     //BOWS
     /*const BOMBARDMENT = 300;
     const LIGHTNING = 301;
@@ -59,7 +57,6 @@ class CustomEnchants extends Enchantment
     const GRAPPLING = 313;
     const PORKIFIED = 314;
     const MISSILE = 315;
-
     //ARMOR
     const MOLTEN = 400;
     const ENLIGHTED = 401;
@@ -78,27 +75,25 @@ class CustomEnchants extends Enchantment
     const SHRINK = 414;
     const GROW = 415;
     const CACTUS = 416;
-
     //HELMET
     //const IMPLANTS = 600;
     const GLOWING = 601;
-
     //BOOTS
     const GEARS = 500;
     const SPRINGS = 501;
     const STOMP = 502;
     const JETPACK = 503;
     const MAGMAWALKER = 504;
-
     //COMPASS
     const RADAR = 700;
-
-    const INVALID = -1;
-
     const SLOT_COMPASS = 0b10000000000000;
-
+    public $id;
+    public $level = 1;
+    public $name;
+    public $rarity;
+    public $activationType;
+    public $slot;
     public static $enchantments;
-
     /**
      * @param $id
      * @param CustomEnchants $enchant
@@ -107,19 +102,33 @@ class CustomEnchants extends Enchantment
     {
         self::$enchantments[$id] = $enchant;
     }
-
+    /**
+     * CustomEnchants constructor.
+     * @param $id
+     * @param $name
+     * @param $rarity
+     * @param $activationType
+     * @param $slot
+     */
+    public function __construct($id, $name, $rarity, $activationType, $slot)
+    {
+        $this->id = $id;
+        $this->name = (string)$name;
+        $this->rarity = (int)$rarity;
+        $this->activationType = (int)$activationType;
+        $this->slot = (int)$slot;
+    }
     /**
      * @param int $id
      * @return CustomEnchants
      */
-    public static function getEnchantment(int $id)
+    public static function getEnchantment($id)
     {
         if (isset(self::$enchantments[$id])) {
-            return clone self::$enchantments[$id];
+            return clone self::$enchantments[(int)$id];
         }
         return new CustomEnchants(self::TYPE_INVALID, "unknown", 0, 0, 0);
     }
-
     /**
      * @param $name
      * @return $this|null|CustomEnchants
@@ -131,7 +140,6 @@ class CustomEnchants extends Enchantment
         }
         return null;
     }
-    
     /**
      * @return mixed
      */
@@ -190,4 +198,7 @@ class CustomEnchants extends Enchantment
     {
         $this->level = (int)$level;
         return $this;
+    }
+}
+
 
