@@ -28,7 +28,7 @@ class Fireball extends Projectile
      * @param $currentTick
      * @return bool
      */
-    public function onUpdate(int $currentTick) : bool
+    public function onUpdate($currentTick) : bool
     {
         if ($this->closed) {
             return false;
