@@ -117,7 +117,7 @@ class CustomEnchants extends Enchantment
         if (isset(self::$enchantments[$id])) {
             return clone self::$enchantments[$id];
         }
-        return null;
+        return new CustomEnchants(self::TYPE_INVALID, "unknown", 0, 0, 0);
     }
 
     /**
