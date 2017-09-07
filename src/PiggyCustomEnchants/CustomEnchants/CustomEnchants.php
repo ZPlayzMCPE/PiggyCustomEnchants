@@ -133,6 +133,7 @@ class CustomEnchants extends Enchantment
     }
 
     }
+
     /**
      * @return mixed
      */
