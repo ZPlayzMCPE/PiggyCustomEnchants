@@ -144,8 +144,8 @@ class Main extends PluginBase
      */
     public function isSpoon()
     {
-        if ($this->getServer()->getName() !== "PocketMine-MP") {
-            $this->getLogger()->error("Well... You're using a spoon. PIGS HATE SPOONS! So enjoy a featureless Custom Enchant plugin by Piggy until you switch to PMMP! :)");
+        if ($this->getServer()->getName() !== "GenisysPro") {
+            $this->getLogger()->error("Well... You're using a spoon. PIGS HATE SPOONS! So enjoy a featureless Custom Enchant plugin by Piggy until you switch to GenisysPro! :)");
             return true;
         }
         if ($this->getDescription()->getAuthors() !== ["DaPigGuy"] || $this->getDescription()->getName() !== "PiggyCustomEnchants") {
