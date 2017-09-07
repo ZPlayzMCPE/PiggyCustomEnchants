@@ -18,7 +18,7 @@ class CustomEnchantCommand extends PluginCommand
 {
     /**
      * CustomEnchantCommand constructor.
-     * @param string $name
+     * @param $name
      * @param Main $plugin
      */
     public function __construct($name, Main $plugin)
