@@ -122,7 +122,7 @@ class CustomEnchants extends Enchantment
 
     /**
      * @param $name
-     * @return null|CustomEnchants
+     * @return $this|null|CustomEnchants
      */
     public static function getEnchantmentByName($name)
     {
