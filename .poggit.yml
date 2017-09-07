@@ -2,6 +2,6 @@
 branches:
 - patch-2
 projects:
-  PiggyCustomEnchants:
+  PiggyCustomEnchantsGeni:
     path: ""
 ...
