@@ -34,7 +34,7 @@ class MoltenTask extends PluginTask
     /**
      * @param $currentTick
      */
-    public function onRun(int $currentTick)
+    public function onRun($currentTick)
     {
         $this->entity->setOnFire(3 * $this->level);
     }
