@@ -132,5 +132,63 @@ class CustomEnchants extends Enchantment
         return null;
     }
 
+    }
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+    /**
+     * @return int
+     */
+    public function getRarity()
+    {
+        return $this->rarity;
+    }
+    /**
+     * @return int
+     */
+    public function getActivationType()
+    {
+        return $this->activationType;
+    }
+    /**
+     * @return int
+     */
+    public function getSlot()
+    {
+        return $this->slot;
+    }
+    /**
+     * @param $slot
+     * @return bool
+     */
+    public function hasSlot($slot)
+    {
+        return ($this->slot & $slot) > 0;
+    }
+    /**
+     * @return int
+     */
+    public function getLevel()
+    {
+        return $this->level;
+    }
+    /**
+     * @param $level
+     * @return $this
+     */
+    public function setLevel($level)
+    {
+        $this->level = (int)$level;
+        return $this;
 
-}
