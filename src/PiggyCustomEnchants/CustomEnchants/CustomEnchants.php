@@ -150,7 +150,7 @@ class CustomEnchants extends Enchantment
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName() : string
     {
         return $this->name;
     }
