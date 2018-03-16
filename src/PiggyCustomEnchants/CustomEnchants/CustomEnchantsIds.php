@@ -77,17 +77,15 @@ class CustomEnchantsIds
     const BERSERKER = 410;
     const CLOAKING = 411;
     const REVIVE = 412;
-    const SHRINK = 413;
-    const GROW = 414;
-    const CACTUS = 415;
-    const ANTIKNOCKBACK = 416;
-    const FORCEFIELD = 417;
-    const OVERLOAD = 418;
-    const ARMORED = 419;
-    const TANK = 420;
-    const HEAVY = 421;
-    const SHIELDED = 422;
-    const POISONOUSCLOUD = 423;
+    const CACTUS = 413;
+    const ANTIKNOCKBACK = 414;
+    const FORCEFIELD = 415;
+    const OVERLOAD = 416;
+    const ARMORED = 417;
+    const TANK = 418;
+    const HEAVY = 419;
+    const SHIELDED = 420;
+    const POISONOUSCLOUD = 421;
 
     //HELMET
     const IMPLANTS = 600;
