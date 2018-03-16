@@ -18,7 +18,6 @@ use PiggyCustomEnchants\Tasks\ParachuteTask;
 use PiggyCustomEnchants\Tasks\PoisonousGasTask;
 use PiggyCustomEnchants\Tasks\ProwlTask;
 use PiggyCustomEnchants\Tasks\RadarTask;
-use PiggyCustomEnchants\Tasks\SizeTask;
 use PiggyCustomEnchants\Tasks\SpiderTask;
 use PiggyCustomEnchants\Tasks\VacuumTask;
 use pocketmine\block\BlockFactory;
@@ -91,10 +90,8 @@ class Main extends PluginBase
     public $bountyhuntercd;
     public $cloakingcd;
     public $endershiftcd;
-    public $growcd;
     public $implantscd;
     public $jetpackcd;
-    public $shrinkcd;
     public $vampirecd;
 
     public $growremaining;
@@ -111,7 +108,6 @@ class Main extends PluginBase
     public $blockface;
 
     public $glowing;
-    public $grew;
     public $flying;
     public $hallucination;
     public $implants;
@@ -121,7 +117,6 @@ class Main extends PluginBase
     public $overload;
     public $prowl;
     public $using;
-    public $shrunk;
 
     public $formsEnabled = false;
 
@@ -162,7 +157,6 @@ class Main extends PluginBase
         CustomEnchantsIds::GLOWING => ["Glowing", "Helmets", "Equip", "Common", 1, "Gives night vision"],
         CustomEnchantsIds::GOOEY => ["Gooey", "Weapons", "Damage", "Uncommon", 5, "Flings enemy into the air"],
         CustomEnchantsIds::GRAPPLING => ["Grappling", "Bow", "Projectile_Hit", "Rare", 1, "Pulls you to location of arrow. If enemy is hit, the enemy will be pulled to you."],
-        CustomEnchantsIds::GROW => ["Grow", "Armor", "Sneak", "Uncommon", 5, "Increases size on sneak (Must be wearing full set of Grow armor)"],
         CustomEnchantsIds::HALLUCINATION => ["Hallucination", "Weapons", "Damage", "Mythic", 5, "5l% (l = level) chance of trapping enemies in a fake prison"],
         CustomEnchantsIds::HARDENED => ["Hardened", "Armor", "Damaged", "Uncommon", 5, "Gives weakness to enemy when hit"],
         CustomEnchantsIds::HASTE => ["Haste", "Tools", "Held", "Uncommon", 5, "Gives haste when held"],
@@ -195,7 +189,6 @@ class Main extends PluginBase
         CustomEnchantsIds::REVULSION => ["Revulsion", "Armor", "Damaged", "Uncommon", 5, "Gives nausea to enemy when hit"],
         CustomEnchantsIds::SELFDESTRUCT => ["Self Destruct", "Armor", "Damaged", "Rare", 5, "Spawn TNT when you die."],
         CustomEnchantsIds::SHIELDED => ["Shielded", "Armor", "Equip", "Rare", 3, "Gives resistance per level per piece of armor"],
-        CustomEnchantsIds::SHRINK => ["Shrink", "Armor", "Sneak", "Uncommon", 2, "Decreases size on sneak (Must be wearing full set of Shrink armor)"],
         CustomEnchantsIds::SHUFFLE => ["Shuffle", "Bow", "Damage", "Rare", 1, "Switches position with target"],
         CustomEnchantsIds::SMELTING => ["Smelting", "Tools", "Break", "Uncommon", 1, "Automatically smelts drops when broken"],
         CustomEnchantsIds::SOULBOUND => ["Soulbound", "Global", "Death", "Mythic", 5, "Keeps item after death (will lower/remove enchantment)"],
@@ -212,7 +205,6 @@ class Main extends PluginBase
     ];
 
     public $incompatibilities = [
-        CustomEnchantsIds::GROW => [CustomEnchantsIds::SHRINK],
         CustomEnchantsIds::VOLLEY => [CustomEnchantsIds::GRAPPLING]
     ];
 
@@ -257,7 +249,6 @@ class Main extends PluginBase
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new ParachuteTask($this), 2);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new ProwlTask($this), 1);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new RadarTask($this), 1);
-            $this->getServer()->getScheduler()->scheduleRepeatingTask(new SizeTask($this), 20);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new SpiderTask($this), 1);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new PoisonousGasTask($this), 1);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new VacuumTask($this), 1);
@@ -488,7 +479,7 @@ class Main extends PluginBase
                 }
                 $item->setNamedTagEntry($ench);
                 if ($sender !== null) {
-                    $sender->sendMessage(TextFormat::GREEN . "Enchanting succeeded.");
+                    $sender->sendMessage(TextFormat::AQUA . "Enchanting succeeded.");
                 }
                 continue;
             }
