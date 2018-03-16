@@ -340,21 +340,6 @@ class EventListener implements Listener
     }
 
     /**
-     * @param ProjectileHitEvent $event
-     *
-     * @priority HIGHEST
-     * @ignoreCancelled true
-     */
-    public function onHit(ProjectileHitEvent $event)
-    {
-        $entity = $event->getEntity();
-        $shooter = $entity->getOwningEntity();
-        if ($shooter instanceof Player) {
-            $this->checkBowEnchants($shooter, $entity, $event);
-        }
-    }
-
-    /**
      * @param DataPacketReceiveEvent $event
      *
      * @priority HIGHEST
@@ -807,40 +792,6 @@ class EventListener implements Listener
             if ($enchantment !== null) {
                 $task = new GrapplingTask($this->plugin, $damager->getPosition(), $entity);
                 $this->plugin->getServer()->getScheduler()->scheduleDelayedTask($task, 1); //Delayed due to knockback interfering
-            }
-        }
-        if ($event instanceof EntityShootBowEvent) {
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::PLACEHOLDER);
-            if ($enchantment !== null) {
-                $nbt = Entity::createBaseNBT($entity, $damager->getDirectionVector(), $entity->yaw, $entity->pitch);
-                $newentity = Entity::createEntity("VolleyArrow", $damager->getLevel(), $nbt, $damager, $entity->isCritical(), true, false);
-                $newentity->setMotion($newentity->getMotion()->multiply($event->getForce()));
-                $newentity->spawnToAll();
-                $entity->close();
-                $entity = $newentity;
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::VOLLEY);
-            if ($enchantment !== null) {
-                $amount = 1 + 2 * $enchantment->getLevel();
-                $anglesbetweenarrows = (45 / ($amount - 1)) * M_PI / 180;
-                $pitch = ($damager->getLocation()->getPitch() + 90) * M_PI / 180;
-                $yaw = ($damager->getLocation()->getYaw() + 90 - 45 / 2) * M_PI / 180;
-                $sZ = cos($pitch);
-                for ($i = 0; $i < $amount; $i++) {
-                    $nX = sin($pitch) * cos($yaw + $anglesbetweenarrows * $i);
-                    $nY = sin($pitch) * sin($yaw + $anglesbetweenarrows * $i);
-                    $newDir = new Vector3($nX, $sZ, $nY);
-                    $projectile = null;
-                    if ($entity instanceof Arrow) {
-                        $nbt = Entity::createBaseNBT($damager->add(0, $damager->getEyeHeight()), $damager->getDirectionVector(), $damager->yaw, $damager->pitch);
-                        $projectile = Entity::createEntity("VolleyArrow", $damager->getLevel(), $nbt, $damager, $entity->isCritical(), false, true);
-                    }
-                    if ($entity instanceof PigProjectile) {
-                        $nbt = Entity::createBaseNBT($damager->add(0, $damager->getEyeHeight()), $damager->getDirectionVector(), $damager->yaw, $damager->pitch);
-                        $projectile = Entity::createEntity("PigProjectile", $damager->getLevel(), $nbt, $damager, false, $entity->getPorkLevel());
-                    }
-                }
-                $entity->close();
             }
         }
         if ($event instanceof ProjectileHitEvent && $entity instanceof Projectile) {
