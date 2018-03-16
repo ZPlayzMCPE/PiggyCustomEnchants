@@ -839,7 +839,6 @@ class EventListener implements Listener
                         $nbt = Entity::createBaseNBT($damager->add(0, $damager->getEyeHeight()), $damager->getDirectionVector(), $damager->yaw, $damager->pitch);
                         $projectile = Entity::createEntity("PigProjectile", $damager->getLevel(), $nbt, $damager, false, $entity->getPorkLevel());
                     }
-                    $projectile->spawnToAll();
                 }
                 $entity->close();
             }
