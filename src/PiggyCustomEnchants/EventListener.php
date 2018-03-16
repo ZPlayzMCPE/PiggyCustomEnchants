@@ -297,9 +297,6 @@ class EventListener implements Listener
         if (isset($this->plugin->glowing[$name])) {
             unset($this->plugin->glowing[$name]);
         }
-        if (isset($this->plugin->grew[$name])) {
-            unset($this->plugin->grew[$name]);
-        }
         if (isset($this->plugin->flying[$name])) {
             unset($this->plugin->flying[$name]);
         }
@@ -838,21 +835,9 @@ class EventListener implements Listener
                         $nbt = Entity::createBaseNBT($damager->add(0, $damager->getEyeHeight()), $damager->getDirectionVector(), $damager->yaw, $damager->pitch);
                         $projectile = Entity::createEntity("VolleyArrow", $damager->getLevel(), $nbt, $damager, $entity->isCritical(), false, true);
                     }
-                    if ($entity instanceof PiggyFireball) {
-                        $nbt = Entity::createBaseNBT($damager->add(0, $damager->getEyeHeight()), $damager->getDirectionVector(), $damager->yaw, $damager->pitch);
-                        $projectile = Entity::createEntity("PiggyFireball", $damager->getLevel(), $nbt, $damager);
-                    }
                     if ($entity instanceof PigProjectile) {
                         $nbt = Entity::createBaseNBT($damager->add(0, $damager->getEyeHeight()), $damager->getDirectionVector(), $damager->yaw, $damager->pitch);
                         $projectile = Entity::createEntity("PigProjectile", $damager->getLevel(), $nbt, $damager, false, $entity->getPorkLevel());
-                    }
-                    if ($entity instanceof PiggyWitherSkull) {
-                        $nbt = Entity::createBaseNBT($damager->add(0, $damager->getEyeHeight()), $damager->getDirectionVector(), $damager->yaw, $damager->pitch);
-                        $projectile = Entity::createEntity("PiggyWitherSkull", $damager->getLevel(), $nbt, $damager);
-                    }
-                    $projectile->setMotion($newDir->normalize()->multiply($entity->getMotion()->multiply($event->getForce())->length()));
-                    if ($projectile->isOnFire()) {
-                        $projectile->setOnFire($entity->fireTicks * 20);
                     }
                     $projectile->spawnToAll();
                 }
