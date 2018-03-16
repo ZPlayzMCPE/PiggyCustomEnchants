@@ -47,21 +47,19 @@ class CustomEnchantsIds
 
     //BOWS
     //const BOMBARDMENT = 300;
-    const WITHERSKULL = 301;
-    //const FIREWORK = 302;
-    const PARALYZE = 303;
-    const MOLOTOV = 304; //Falling sand fire doesn't appear
-    const VOLLEY = 305;
-    const AUTOAIM = 306;
-    const PIERCING = 307;
-    const SHUFFLE = 308;
-    const BOUNTYHUNTER = 309; //Not accurate
-    const HEALING = 310;
-    const HEADHUNTER = 311;
-    const GRAPPLING = 312;
-    const PORKIFIED = 313;
-    const MISSILE = 314;
-    const PLACEHOLDER = 315;
+    //const FIREWORK = 301;
+    const PARALYZE = 302;
+    const MOLOTOV = 303; //Falling sand fire doesn't appear
+    const VOLLEY = 304;
+    const AUTOAIM = 305;
+    const PIERCING = 306;
+    const SHUFFLE = 307;
+    const BOUNTYHUNTER = 308; //Not accurate
+    const HEALING = 309;
+    const HEADHUNTER = 310;
+    const GRAPPLING = 311;
+    const MISSILE = 312;
+    const PLACEHOLDER = 313;
 
     //ARMOR
     const MOLTEN = 400;
