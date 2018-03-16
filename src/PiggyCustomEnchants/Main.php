@@ -15,7 +15,6 @@ use PiggyCustomEnchants\Tasks\ForcefieldTask;
 use PiggyCustomEnchants\Tasks\JetpackTask;
 use PiggyCustomEnchants\Tasks\MeditationTask;
 use PiggyCustomEnchants\Tasks\ParachuteTask;
-use PiggyCustomEnchants\Tasks\PoisonousGasTask;
 use PiggyCustomEnchants\Tasks\ProwlTask;
 use PiggyCustomEnchants\Tasks\RadarTask;
 use PiggyCustomEnchants\Tasks\SpiderTask;
@@ -94,14 +93,11 @@ class Main extends PluginBase
     public $jetpackcd;
     public $vampirecd;
 
-    public $growremaining;
     public $jetpackDisabled;
-    public $shrinkremaining;
     public $flyremaining;
 
     public $chickenTick;
     public $forcefieldParticleTick;
-    public $gasParticleTick;
     public $jetpackChargeTick;
     public $meditationTick;
 
@@ -180,7 +176,6 @@ class Main extends PluginBase
         CustomEnchantsIds::PARACHUTE => ["Parachute", "Chestplate", "Equip", "Uncommon", 1, "Slows your fall (above 3 blocks)s"],
         CustomEnchantsIds::PARALYZE => ["Paralyze", "Bow", "Damage", "Rare", 5, "Gives slowness, blindness, and weakness"],
         CustomEnchantsIds::PIERCING => ["Piercing", "Bow", "Damage", "Rare", 5, "Ignores armor when dealing damage"],
-        CustomEnchantsIds::POISONOUSCLOUD => ["Poisonous Cloud", "Armor", "Equip", "Rare", 3, ""],
         CustomEnchantsIds::POISONED => ["Poisoned", "Armor", "Damaged", "Uncommon", 5, "Poisons enemy when hit"],
         CustomEnchantsIds::PROWL => ["Prowl", "Chestplate", "Equip", "Rare", 1, "Goes invisible when sneaking, gives slowness"],
         CustomEnchantsIds::QUICKENING => ["Quickening", "Tools", "Break", "Uncommon", 5, "Gives speed when block is broken"],
@@ -250,7 +245,6 @@ class Main extends PluginBase
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new ProwlTask($this), 1);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new RadarTask($this), 1);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new SpiderTask($this), 1);
-            $this->getServer()->getScheduler()->scheduleRepeatingTask(new PoisonousGasTask($this), 1);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new VacuumTask($this), 1);
             $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 
