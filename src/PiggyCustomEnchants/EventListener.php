@@ -326,9 +326,6 @@ class EventListener implements Listener
         if (isset($this->plugin->using[$name])) {
             unset($this->plugin->using[$name]);
         }
-        if (isset($this->plugin->shrunk[$name])) {
-            unset($this->plugin->shrunk[$name]);
-        }
     }
 
     /**
@@ -1182,64 +1179,6 @@ class EventListener implements Listener
                                 $task->setHandler($handler);
                             }
                             $this->plugin->implantscd[$entity->getLowerCaseName()] = time() + 1;
-                        }
-                    }
-                }
-            }
-            if ($event instanceof PlayerToggleSneakEvent) {
-                $shrinkpoints = 0;
-                $growpoints = 0;
-                $shrinklevel = 0;
-                $growlevel = 0;
-                foreach ($entity->getArmorInventory()->getContents() as $armor) {
-                    $enchantment = $armor->getEnchantment(CustomEnchantsIds::SHRINK);
-                    if ($enchantment !== null) {
-                        $shrinklevel += $enchantment->getLevel();
-                        $shrinkpoints++;
-                    }
-                    $enchantment = $armor->getEnchantment(CustomEnchantsIds::GROW);
-                    if ($enchantment !== null) {
-                        $growlevel += $enchantment->getLevel();
-                        $growpoints++;
-                    }
-                }
-                if ($shrinkpoints >= 4) {
-                    if (isset($this->plugin->shrunk[$entity->getLowerCaseName()]) && $this->plugin->shrunk[$entity->getLowerCaseName()] > time()) {
-                        $this->plugin->shrinkremaining[$entity->getLowerCaseName()] = $this->plugin->shrunk[$entity->getLowerCaseName()] - time();
-                        unset($this->plugin->shrinkcd[$entity->getLowerCaseName()]);
-                        unset($this->plugin->shrunk[$entity->getLowerCaseName()]);
-                        $entity->setScale(1);
-                        $entity->sendTip(TextFormat::RED . "You have grown back to normal size.");
-                    } else {
-                        if (!isset($this->plugin->shrinkcd[$entity->getLowerCaseName()]) || $this->plugin->shrinkcd[$entity->getLowerCaseName()] <= time()) {
-                            $scale = $entity->getScale() - 0.70 - (($shrinklevel / 4) * 0.05);
-                            $entity->setScale($scale);
-                            $this->plugin->shrunk[$entity->getLowerCaseName()] = isset($this->plugin->shrinkremaining[$entity->getLowerCaseName()]) ? time() + $this->plugin->shrinkremaining[$entity->getLowerCaseName()] : time() + 60;
-                            $this->plugin->shrinkcd[$entity->getLowerCaseName()] = isset($this->plugin->shrinkremaining[$entity->getLowerCaseName()]) ? time() + (75 - (60 - $this->plugin->shrinkremaining[$entity->getLowerCaseName()])) : time() + 75;
-                            $entity->sendTip(TextFormat::GREEN . "You have shrunk. Sneak again to grow back to normal size.");
-                            if (isset($this->plugin->shrinkremaining[$entity->getLowerCaseName()])) {
-                                unset($this->plugin->shrinkremaining[$entity->getLowerCaseName()]);
-                            }
-                        }
-                    }
-                }
-                if ($growpoints >= 4) {
-                    if (isset($this->plugin->grew[$entity->getLowerCaseName()]) && $this->plugin->grew[$entity->getLowerCaseName()] > time()) {
-                        $this->plugin->growremaining[$entity->getLowerCaseName()] = $this->plugin->grew[$entity->getLowerCaseName()] - time();
-                        unset($this->plugin->growcd[$entity->getLowerCaseName()]);
-                        unset($this->plugin->grew[$entity->getLowerCaseName()]);
-                        $entity->setScale(1);
-                        $entity->sendTip(TextFormat::RED . "You have shrunk back to normal size.");
-                    } else {
-                        if (!isset($this->plugin->growcd[$entity->getLowerCaseName()]) || $this->plugin->growcd[$entity->getLowerCaseName()] <= time()) {
-                            $scale = $entity->getScale() + 0.30 + (($growlevel / 4) * 0.05);
-                            $entity->setScale($scale);
-                            $this->plugin->grew[$entity->getLowerCaseName()] = isset($this->plugin->growremaining[$entity->getLowerCaseName()]) ? time() + $this->plugin->growremaining[$entity->getLowerCaseName()] : time() + 60;
-                            $this->plugin->growcd[$entity->getLowerCaseName()] = isset($this->plugin->growremaining[$entity->getLowerCaseName()]) ? time() + (75 - (60 - $this->plugin->growremaining[$entity->getLowerCaseName()])) : time() + 75;
-                            $entity->sendTip(TextFormat::GREEN . "You have grown. Sneak again to shrink back to normal size.");
-                            if (isset($this->plugin->growremaining[$entity->getLowerCaseName()])) {
-                                unset($this->plugin->growremaining[$entity->getLowerCaseName()]);
-                            }
                         }
                     }
                 }
