@@ -9,7 +9,6 @@ use PiggyCustomEnchants\CustomEnchants\CustomEnchantsIds;
 use PiggyCustomEnchants\Tasks\CactusTask;
 use PiggyCustomEnchants\Tasks\ChickenTask;
 use PiggyCustomEnchants\Tasks\EffectTask;
-use PiggyCustomEnchants\Tasks\ForcefieldTask;
 use PiggyCustomEnchants\Tasks\JetpackTask;
 use PiggyCustomEnchants\Tasks\MeditationTask;
 use PiggyCustomEnchants\Tasks\ParachuteTask;
@@ -80,16 +79,7 @@ class Main extends PluginBase
         "WHITE" => TextFormat::WHITE
     ];
 
-    const PIGGY_ENTITIES = [
-        PiggyFireball::class,
-        PiggyLightning::class,
-        PigProjectile::class,
-        VolleyArrow::class,
-        PiggyWitherSkull::class
-    ];
-
     public $berserkercd;
-    public $bountyhuntercd;
     public $cloakingcd;
     public $endershiftcd;
     public $growcd;
@@ -104,8 +94,6 @@ class Main extends PluginBase
     public $flyremaining;
 
     public $chickenTick;
-    public $forcefieldParticleTick;
-    public $gasParticleTick;
     public $jetpackChargeTick;
     public $meditationTick;
 
@@ -140,7 +128,6 @@ class Main extends PluginBase
         CustomEnchantsIds::BERSERKER => ["Berserker", "Armor", "Damaged", "Rare", 5, "Gives strength on low health"],
         CustomEnchantsIds::BLESSED => ["Blessed", "Weapons", "Damage", "Uncommon", 3, "15l% (l = level) chance to remove bad effects"],
         CustomEnchantsIds::BLIND => ["Blind", "Weapons", "Damage", "Common", 5, "Gives enemies blindness"],
-        CustomEnchantsIds::BOUNTYHUNTER => ["Bounty Hunter", "Bow", "Damage", "Uncommon", 5, "Collect bounties (items) when hitting enemies."],
         CustomEnchantsIds::CACTUS => ["Cactus", "Armor", "Equip", "Rare", 1, "Poke people around you", "Poke people around you"],
         CustomEnchantsIds::CHARGE => ["Charge", "Weapons", "Damage", "Uncommon", 5, "Increases damage when sprinting"],
         CustomEnchantsIds::CHICKEN => ["Chicken", "Chestplate", "Equip", "Uncommon", 5, "Lays egg every 5 minutes, 5l% (l = level) chance of rare drop"],
@@ -170,8 +157,6 @@ class Main extends PluginBase
         CustomEnchantsIds::HARDENED => ["Hardened", "Armor", "Damaged", "Uncommon", 5, "Gives weakness to enemy when hit"],
         CustomEnchantsIds::HASTE => ["Haste", "Tools", "Held", "Uncommon", 5, "Gives haste when held"],
         CustomEnchantsIds::HARVEST => ["Harvest", "Hoe", "Break", "Uncommon", 3, "Harvest crops in a level radius around the block"],
-        CustomEnchantsIds::HEADHUNTER => ["Headhunter", "Bow", "Damage", "Uncommon", 5, "Increases damage if enemy is shot in the head"],
-        CustomEnchantsIds::HEALING => ["Healing", "Bow", "Damage", "Rare", 5, "Heals target when shot"],
         CustomEnchantsIds::HEAVY => ["Heavy", "Armor", "Damage", "Rare", 5, "Decreases damage from axes by 20l%"],
         CustomEnchantsIds::IMPLANTS => ["Implants", "Helmets", "Move", "Rare", 5, "Replenishes hunger and air"],
         CustomEnchantsIds::JETPACK => ["Jetpack", "Boots", "Sneak", "Rare", 3, "Enable flying (you fly where you look) when you sneak."],
@@ -196,7 +181,6 @@ class Main extends PluginBase
         CustomEnchantsIds::SELFDESTRUCT => ["Self Destruct", "Armor", "Damaged", "Rare", 5, "Spawn TNT when you die."],
         CustomEnchantsIds::SHIELDED => ["Shielded", "Armor", "Equip", "Rare", 3, "Gives resistance per level per piece of armor"],
         CustomEnchantsIds::SHRINK => ["Shrink", "Armor", "Sneak", "Uncommon", 2, "Decreases size on sneak (Must be wearing full set of Shrink armor)"],
-        CustomEnchantsIds::SHUFFLE => ["Shuffle", "Bow", "Damage", "Rare", 1, "Switches position with target"],
         CustomEnchantsIds::SMELTING => ["Smelting", "Tools", "Break", "Uncommon", 1, "Automatically smelts drops when broken"],
         CustomEnchantsIds::SOULBOUND => ["Soulbound", "Global", "Death", "Mythic", 5, "Keeps item after death (will lower/remove enchantment)"],
         CustomEnchantsIds::SPIDER => ["Spider", "Chestplate", "Equip", "Rare", 1, "Climb walls"],
@@ -235,18 +219,12 @@ class Main extends PluginBase
             if (count($this->jetpackDisabled) > 0) {
                 $this->getLogger()->info(TextFormat::RED . "Jetpack is currently disabled in the levels " . implode(", ", $this->jetpackDisabled) . ".");
             }
-            BlockFactory::registerBlock(new PiggyObsidian(), true);
-            foreach (self::PIGGY_ENTITIES as $piggyEntity) {
-                Entity::registerEntity($piggyEntity, true);
-            }
-
             if (!ItemFactory::isRegistered(Item::ENCHANTED_BOOK)) { //Check if it isn't already registered by another plugin
                 ItemFactory::registerItem(new Item(Item::ENCHANTED_BOOK, 0, "Enchanted Book")); //This is a temporary fix for name being Unknown when given due to no implementation in PMMP. Will remove when implemented in PMMP
             }
             $this->getServer()->getCommandMap()->register("customenchant", new CustomEnchantCommand("customenchant", $this));
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new CactusTask($this), 10);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new ChickenTask($this), 20);
-            $this->getServer()->getScheduler()->scheduleRepeatingTask(new ForcefieldTask($this), 1);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new EffectTask($this), 5);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new JetpackTask($this), 1);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new MeditationTask($this), 20);
