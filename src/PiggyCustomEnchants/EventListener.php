@@ -3,11 +3,7 @@
 namespace PiggyCustomEnchants;
 
 use PiggyCustomEnchants\CustomEnchants\CustomEnchantsIds;
-use PiggyCustomEnchants\Entities\PiggyFireball;
-use PiggyCustomEnchants\Entities\PiggyWitherSkull;
-use PiggyCustomEnchants\Entities\PigProjectile;
 use PiggyCustomEnchants\Tasks\GoeyTask;
-use PiggyCustomEnchants\Tasks\GrapplingTask;
 use PiggyCustomEnchants\Tasks\HallucinationTask;
 use PiggyCustomEnchants\Tasks\ImplantsTask;
 use PiggyCustomEnchants\Tasks\MoltenTask;
@@ -19,8 +15,6 @@ use pocketmine\entity\Effect;
 use pocketmine\entity\EffectInstance;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Living;
-use pocketmine\entity\projectile\Arrow;
-use pocketmine\entity\projectile\Projectile;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityArmorChangeEvent;
 use pocketmine\event\entity\EntityDamageByChildEntityEvent;
@@ -28,8 +22,6 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityEffectAddEvent;
 use pocketmine\event\entity\EntityEvent;
-use pocketmine\event\entity\EntityShootBowEvent;
-use pocketmine\event\entity\ProjectileHitBlockEvent;
 use pocketmine\event\Event;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
@@ -165,22 +157,6 @@ class EventListener implements Listener
             $this->checkArmorEnchants($entity, $event);
         }
     }
-
-    /**
-     * @param EntityShootBowEvent $event
-     *
-     * @priority HIGHEST
-     * @ignoreCancelled true
-     */
-    public function onShoot(EntityShootBowEvent $event)
-    {
-        $shooter = $event->getEntity();
-        $entity = $event->getProjectile();
-        if ($shooter instanceof Player) {
-            $this->checkBowEnchants($shooter, $entity, $event);
-        }
-    }
-
     /**
      * @param InventoryTransactionEvent $event
      *
@@ -346,21 +322,6 @@ class EventListener implements Listener
         $player = $event->getPlayer();
         if ($event->isSneaking()) {
             $this->checkArmorEnchants($player, $event);
-        }
-    }
-
-    /**
-     * @param ProjectileHitBlockEvent $event
-     *
-     * @priority HIGHEST
-     * @ignoreCancelled true
-     */
-    public function onHit(ProjectileHitBlockEvent $event)
-    {
-        $entity = $event->getEntity();
-        $shooter = $entity->getOwningEntity();
-        if ($shooter instanceof Player) {
-            $this->checkBowEnchants($shooter, $entity, $event);
         }
     }
 
@@ -765,198 +726,6 @@ class EventListener implements Listener
         }
     }
 
-    /**
-     * @param Player $damager
-     * @param Entity $entity
-     * @param EntityEvent $event
-     */
-    public function checkBowEnchants(Player $damager, Entity $entity, EntityEvent $event)
-    {
-        if ($event instanceof EntityDamageByChildEntityEvent) {
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::MOLOTOV);
-            if ($enchantment !== null) {
-                $boundaries = 0.1 * $enchantment->getLevel();
-                for ($x = $boundaries; $x >= -$boundaries; $x -= 0.1) {
-                    for ($z = $boundaries; $z >= -$boundaries; $z -= 0.1) {
-                        $entity->getLevel()->setBlock($entity->add(0, 1), Block::get(Block::FIRE));
-                        $fire = Entity::createEntity("FallingSand", $entity->getLevel(), new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $entity->x + 0.5), new DoubleTag("", $entity->y + 1), new DoubleTag("", $entity->z + 0.5)]), "Motion" => new ListTag("Motion", [new DoubleTag("", $x), new DoubleTag("", 0.1), new DoubleTag("", $z)]), "Rotation" => new ListTag("Rotation", [new FloatTag("", 0), new FloatTag("", 0)]), "TileID" => new IntTag("TileID", 51), "Data" => new ByteTag("Data", 0)]));
-                        $fire->spawnToAll();
-                    }
-                }
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::PARALYZE);
-            if ($enchantment !== null and $entity instanceof Living) {
-                if (!$entity->hasEffect(Effect::SLOWNESS)) {
-                    $effect = new EffectInstance(Effect::getEffect(Effect::SLOWNESS), 60 + ($enchantment->getLevel() - 1) * 20, 5 + $enchantment->getLevel() - 1, false);
-                    $entity->addEffect($effect);
-                }
-                if (!$entity->hasEffect(Effect::BLINDNESS)) {
-                    $effect = new EffectInstance(Effect::getEffect(Effect::BLINDNESS), 60 + ($enchantment->getLevel() - 1) * 20, 1, false);
-                    $entity->addEffect($effect);
-                }
-                if (!$entity->hasEffect(Effect::WEAKNESS)) {
-                    $effect = new EffectInstance(Effect::getEffect(Effect::WEAKNESS), 60 + ($enchantment->getLevel() - 1) * 20,  5 + $enchantment->getLevel() - 1, false);
-                    $entity->addEffect($effect);
-                }
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::PIERCING);
-            if ($enchantment !== null) {
-                $event->setDamage(0, EntityDamageEvent::MODIFIER_ARMOR);
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::SHUFFLE);
-            if ($enchantment !== null) {
-                $pos1 = clone $damager->getPosition();
-                $pos2 = clone $entity->getPosition();
-                $damager->teleport($pos2);
-                $entity->teleport($pos1);
-                $name = $entity->getNameTag();
-                if ($entity instanceof Player) {
-                    $name = $entity->getDisplayName();
-                    $entity->sendMessage(TextFormat::DARK_PURPLE . "You have switched positions with " . $damager->getDisplayName());
-                }
-                $damager->sendMessage(TextFormat::DARK_PURPLE . "You have switched positions with " . $name);
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::BOUNTYHUNTER);
-            if ($enchantment !== null) {
-                if (!isset($this->plugin->bountyhuntercd[$damager->getLowerCaseName()]) || time() > $this->plugin->bountyhuntercd[$damager->getLowerCaseName()]) {
-                    $bountydrop = $this->getBounty();
-                    $damager->getInventory()->addItem(Item::get($bountydrop, 0, mt_rand(0, 8 + $enchantment->getLevel()) + 1));
-                    $this->plugin->bountyhuntercd[$damager->getLowerCaseName()] = time() + 30;
-                }
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::HEALING);
-            if ($enchantment !== null) {
-                if ($entity->getHealth() + $event->getDamage() + $enchantment->getLevel() <= $entity->getMaxHealth()) {
-                    $entity->setHealth($entity->getHealth() + $event->getDamage() + $enchantment->getLevel());
-                } else {
-                    $entity->setHealth($entity->getMaxHealth());
-                }
-                $event->setDamage(0);
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::HEADHUNTER);
-            if ($enchantment !== null) {
-                $projectile = $event->getChild();
-                if ($projectile->y > $entity->getPosition()->y + $entity->getEyeHeight()) {
-                    $event->setDamage($event->getDamage() * (1 + 0.10 * $enchantment->getLevel()));
-                }
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::GRAPPLING);
-            if ($enchantment !== null) {
-                $task = new GrapplingTask($this->plugin, $damager->getPosition(), $entity);
-                $this->plugin->getServer()->getScheduler()->scheduleDelayedTask($task, 1); //Delayed due to knockback interfering
-            }
-        }
-        if ($event instanceof EntityShootBowEvent) {
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::PLACEHOLDER);
-            if ($enchantment !== null) {
-                $nbt = Entity::createBaseNBT($entity, $damager->getDirectionVector(), $entity->yaw, $entity->pitch);
-                $newentity = Entity::createEntity("VolleyArrow", $damager->getLevel(), $nbt, $damager, $entity->isCritical(), true, false);
-                $newentity->setMotion($newentity->getMotion()->multiply($event->getForce()));
-                $newentity->spawnToAll();
-                $entity->close();
-                $entity = $newentity;
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::BLAZE);
-            if ($enchantment !== null && $entity instanceof PiggyFireball !== true) {
-                $nbt = Entity::createBaseNBT($entity, $damager->getDirectionVector(), $entity->yaw, $entity->pitch);
-                $fireball = Entity::createEntity("PiggyFireball", $damager->getLevel(), $nbt, $damager, isset($entity->placeholder) ? $entity->placeholder : false);
-                $fireball->setMotion($fireball->getMotion()->multiply($event->getForce()));
-                $fireball->spawnToAll();
-                $entity->close();
-                $entity = $fireball;
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::PORKIFIED);
-            if ($enchantment !== null && $entity instanceof PigProjectile !== true) {
-                $nbt = Entity::createBaseNBT($entity, $damager->getDirectionVector(), $entity->yaw, $entity->pitch);
-                $pig = Entity::createEntity("PigProjectile", $damager->getLevel(), $nbt, $damager, isset($entity->placeholder) ? $entity->placeholder : false, $enchantment->getLevel());
-                $pig->setMotion($pig->getMotion()->multiply($event->getForce()));
-                $pig->spawnToAll();
-                $entity->close();
-                $entity = $pig;
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::WITHERSKULL);
-            if ($enchantment !== null && $entity instanceof PiggyWitherSkull !== true) {
-                $nbt = Entity::createBaseNBT($entity, $damager->getDirectionVector(), $entity->yaw, $entity->pitch);
-                $skull = Entity::createEntity("PiggyWitherSkull", $damager->getLevel(), $nbt, $damager, isset($entity->placeholder) ? $entity->placeholder : false, $enchantment->getLevel() > 1 ? true : false);
-                $skull->setMotion($skull->getMotion()->multiply($event->getForce()));
-                $skull->spawnToAll();
-                $entity->close();
-                $entity = $skull;
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::VOLLEY);
-            if ($enchantment !== null) {
-                $amount = 1 + 2 * $enchantment->getLevel();
-                $anglesbetweenarrows = (45 / ($amount - 1)) * M_PI / 180;
-                $pitch = ($damager->getLocation()->getPitch() + 90) * M_PI / 180;
-                $yaw = ($damager->getLocation()->getYaw() + 90 - 45 / 2) * M_PI / 180;
-                $sZ = cos($pitch);
-                for ($i = 0; $i < $amount; $i++) {
-                    $nX = sin($pitch) * cos($yaw + $anglesbetweenarrows * $i);
-                    $nY = sin($pitch) * sin($yaw + $anglesbetweenarrows * $i);
-                    $newDir = new Vector3($nX, $sZ, $nY);
-                    $projectile = null;
-                    if ($entity instanceof Arrow) {
-                        $nbt = Entity::createBaseNBT($damager->add(0, $damager->getEyeHeight()), $damager->getDirectionVector(), $damager->yaw, $damager->pitch);
-                        $projectile = Entity::createEntity("VolleyArrow", $damager->getLevel(), $nbt, $damager, $entity->isCritical(), false, true);
-                    }
-                    if ($entity instanceof PiggyFireball) {
-                        $nbt = Entity::createBaseNBT($damager->add(0, $damager->getEyeHeight()), $damager->getDirectionVector(), $damager->yaw, $damager->pitch);
-                        $projectile = Entity::createEntity("PiggyFireball", $damager->getLevel(), $nbt, $damager);
-                    }
-                    if ($entity instanceof PigProjectile) {
-                        $nbt = Entity::createBaseNBT($damager->add(0, $damager->getEyeHeight()), $damager->getDirectionVector(), $damager->yaw, $damager->pitch);
-                        $projectile = Entity::createEntity("PigProjectile", $damager->getLevel(), $nbt, $damager, false, $entity->getPorkLevel());
-                    }
-                    if ($entity instanceof PiggyWitherSkull) {
-                        $nbt = Entity::createBaseNBT($damager->add(0, $damager->getEyeHeight()), $damager->getDirectionVector(), $damager->yaw, $damager->pitch);
-                        $projectile = Entity::createEntity("PiggyWitherSkull", $damager->getLevel(), $nbt, $damager);
-                    }
-                    $projectile->setMotion($newDir->normalize()->multiply($entity->getMotion()->multiply($event->getForce())->length()));
-                    if ($projectile->isOnFire()) {
-                        $projectile->setOnFire($entity->fireTicks * 20);
-                    }
-                    $projectile->spawnToAll();
-                }
-                $entity->close();
-            }
-        }
-        if ($event instanceof ProjectileHitBlockEvent && $entity instanceof Projectile) {
-            if ($entity->hadCollision) {
-                $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::GRAPPLING);
-                if ($enchantment !== null) {
-                    $location = $entity->getPosition();
-                    $damagerloc = $damager->getPosition();
-                    if ($damager->distance($entity) < 6) {
-                        if ($location->y > $damager->y) {
-                            $damager->setMotion(new Vector3(0, 0.25, 0));
-                        } else {
-                            $v = $location->subtract($damagerloc);
-                            $damager->setMotion($v);
-                        }
-                    } else {
-                        $g = -0.08;
-                        $d = $location->distance($damagerloc);
-                        $t = $d;
-                        $v_x = (1.0 + 0.07 * $t) * ($location->x - $damagerloc->x) / $t;
-                        $v_y = (1.0 + 0.03 * $t) * ($location->y - $damagerloc->y) / $t - 0.5 * $g * $t;
-                        $v_z = (1.0 + 0.07 * $t) * ($location->z - $damagerloc->z) / $t;
-                        $v = $damager->getMotion();
-                        $v->setComponents($v_x, $v_y, $v_z);
-                        $damager->setMotion($v);
-                    }
-                    $this->plugin->nofall[$damager->getLowerCaseName()] = time() + 1;
-                }
-            }
-            $enchantment = $damager->getInventory()->getItemInHand()->getEnchantment(CustomEnchantsIds::MISSILE);
-            if ($enchantment !== null) {
-                for ($i = 0; $i <= $enchantment->getLevel(); $i++) {
-                    $tnt = Entity::createEntity("PrimedTNT", $entity->getLevel(), new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $entity->x), new DoubleTag("", $entity->y), new DoubleTag("", $entity->z)]), "Motion" => new ListTag("Motion", [new DoubleTag("", 0), new DoubleTag("", 0), new DoubleTag("", 0)]), "Rotation" => new ListTag("Rotation", [new FloatTag("", 0), new FloatTag("", 0)]), "Fuse" => new ByteTag("Fuse", 40)]));
-                    $tnt->spawnToAll();
-                    $entity->close();
-                }
-            }
-        }
-    }
 
     /**
      * @param Entity $entity
