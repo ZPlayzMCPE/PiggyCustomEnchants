@@ -6,12 +6,6 @@ use PiggyCustomEnchants\Blocks\PiggyObsidian;
 use PiggyCustomEnchants\Commands\CustomEnchantCommand;
 use PiggyCustomEnchants\CustomEnchants\CustomEnchants;
 use PiggyCustomEnchants\CustomEnchants\CustomEnchantsIds;
-use PiggyCustomEnchants\Entities\PiggyFireball;
-use PiggyCustomEnchants\Entities\PiggyLightning;
-use PiggyCustomEnchants\Entities\PiggyWitherSkull;
-use PiggyCustomEnchants\Entities\PigProjectile;
-use PiggyCustomEnchants\Entities\VolleyArrow;
-use PiggyCustomEnchants\Tasks\AutoAimTask;
 use PiggyCustomEnchants\Tasks\CactusTask;
 use PiggyCustomEnchants\Tasks\ChickenTask;
 use PiggyCustomEnchants\Tasks\EffectTask;
@@ -19,7 +13,6 @@ use PiggyCustomEnchants\Tasks\ForcefieldTask;
 use PiggyCustomEnchants\Tasks\JetpackTask;
 use PiggyCustomEnchants\Tasks\MeditationTask;
 use PiggyCustomEnchants\Tasks\ParachuteTask;
-use PiggyCustomEnchants\Tasks\PoisonousGasTask;
 use PiggyCustomEnchants\Tasks\ProwlTask;
 use PiggyCustomEnchants\Tasks\RadarTask;
 use PiggyCustomEnchants\Tasks\SizeTask;
@@ -142,12 +135,10 @@ class Main extends PluginBase
         CustomEnchantsIds::ANTITOXIN => ["Antitoxin", "Helmets", "Effect", "Mythic", 1, "Immunity to poison"],
         CustomEnchantsIds::AERIAL => ["Aerial", "Weapons", "Damage", "Common", 5, "Increases damage in air"],
         CustomEnchantsIds::ARMORED => ["Armored", "Armor", "Damage", "Rare", 5, "Decreases sword damage by 20l%"],
-        CustomEnchantsIds::AUTOAIM => ["Auto Aim", "Bow", "Held", "Mythic", 1, "Aim at nearest target"],
         CustomEnchantsIds::AUTOREPAIR => ["Autorepair", "Damageable", "Move", "Uncommon", 5, "Automatically repairs items when moving"],
         CustomEnchantsIds::BACKSTAB => ["Backstab", "Weapons", "Damage", "Uncommon", 5, "When hitting from behind, you deal more damage."],
         CustomEnchantsIds::BERSERKER => ["Berserker", "Armor", "Damaged", "Rare", 5, "Gives strength on low health"],
         CustomEnchantsIds::BLESSED => ["Blessed", "Weapons", "Damage", "Uncommon", 3, "15l% (l = level) chance to remove bad effects"],
-        CustomEnchantsIds::BLAZE => ["Blaze", "Bow", "Shoot", "Rare", 1, "Shoots fireballs"],
         CustomEnchantsIds::BLIND => ["Blind", "Weapons", "Damage", "Common", 5, "Gives enemies blindness"],
         CustomEnchantsIds::BOUNTYHUNTER => ["Bounty Hunter", "Bow", "Damage", "Uncommon", 5, "Collect bounties (items) when hitting enemies."],
         CustomEnchantsIds::CACTUS => ["Cactus", "Armor", "Equip", "Rare", 1, "Poke people around you", "Poke people around you"],
@@ -157,7 +148,6 @@ class Main extends PluginBase
         CustomEnchantsIds::CRIPPLINGSTRIKE => ["Cripple", "Weapons", "Damage", "Common", 5, "Gives enemies nausea and slowness"],
         CustomEnchantsIds::CRIPPLE => ["Cripple", "Weapons", "Damage", "Common", 5, "Gives enemies nausea and slowness"],
         CustomEnchantsIds::CURSED => ["Cursed", "Armor", "Damaged", "Uncommon", 5, "Gives wither to enemy when hit"],
-        CustomEnchantsIds::DEATHBRINGER => ["Deathbringer", "Weapons", "Damage", "Rare", 5, "Increases damage"],
         CustomEnchantsIds::DISARMING => ["Disarming", "Weapons", "Damage", "Uncommon", 5, "10l% chance to disarm enemy"],
         CustomEnchantsIds::DISARMOR => ["Disarmor", "Weapons", "Damage", "Uncommon", 5, "10l% chance to disarmor enemy"],
         CustomEnchantsIds::DRILLER => ["Driller", "Tools", "Break", "Uncommon", 5, "Breaks a 3 by 3 by 1 + level"],
@@ -175,7 +165,6 @@ class Main extends PluginBase
         CustomEnchantsIds::GEARS => ["Gears", "Boots", "Equip", "Uncommon", 5, "Gives speed"],
         CustomEnchantsIds::GLOWING => ["Glowing", "Helmets", "Equip", "Common", 1, "Gives night vision"],
         CustomEnchantsIds::GOOEY => ["Gooey", "Weapons", "Damage", "Uncommon", 5, "Flings enemy into the air"],
-        CustomEnchantsIds::GRAPPLING => ["Grappling", "Bow", "Projectile_Hit", "Rare", 1, "Pulls you to location of arrow. If enemy is hit, the enemy will be pulled to you."],
         CustomEnchantsIds::GROW => ["Grow", "Armor", "Sneak", "Uncommon", 5, "Increases size on sneak (Must be wearing full set of Grow armor)"],
         CustomEnchantsIds::HALLUCINATION => ["Hallucination", "Weapons", "Damage", "Mythic", 5, "5l% (l = level) chance of trapping enemies in a fake prison"],
         CustomEnchantsIds::HARDENED => ["Hardened", "Armor", "Damaged", "Uncommon", 5, "Gives weakness to enemy when hit"],
@@ -192,19 +181,13 @@ class Main extends PluginBase
         CustomEnchantsIds::LUMBERJACK => ["Lumberjack", "Axe", "Break", "Rare", 1, "Mines all logs connected to log when broken"],
         CustomEnchantsIds::MAGMAWALKER => ["Magma Walker", "Boots", "Move", "Uncommon", 2, "Turns lava into obsidian around you"],
         CustomEnchantsIds::MEDITATION => ["Meditation", "Helmets", "Equip", "Uncommon", 5, "Replenish health and hunger every 20 seconds (half a hunger bar/heart per level)"],
-        CustomEnchantsIds::MISSILE => ["Missile", "Bow", "Projectile_Hit", "Rare", 5, "Spawns tnt on hit"],
-        CustomEnchantsIds::MOLOTOV => ["Molotov", "Bow", "Projectile_Hit", "Uncommon", 5, "Starts fire around target"],
         CustomEnchantsIds::MOLTEN => ["Molten", "Armor", "Damaged", "Rare", 5, "Sets enemy on fire when hit"],
         CustomEnchantsIds::OBSIDIANSHIELD => ["Obsidian Shield", "Armor", "Equip", "Common", 5, "Gives fire resistance while worn"],
         CustomEnchantsIds::OVERLOAD => ["Overload", "Armor", "Equip", "Mythic", 3, "Gives 1 extra heart per level per armor piece"],
         CustomEnchantsIds::OXYGENATE => ["Oxygenate", "Tools", "Break", "Uncommon", 1, "Breathe underwater when held"],
         CustomEnchantsIds::PARACHUTE => ["Parachute", "Chestplate", "Equip", "Uncommon", 1, "Slows your fall (above 3 blocks)s"],
-        CustomEnchantsIds::PARALYZE => ["Paralyze", "Bow", "Damage", "Rare", 5, "Gives slowness, blindness, and weakness"],
-        CustomEnchantsIds::PIERCING => ["Piercing", "Bow", "Damage", "Rare", 5, "Ignores armor when dealing damage"],
         CustomEnchantsIds::POISON => ["Poison", "Weapons", "Damage", "Uncommon", 5, "Poisons enemies"],
-        CustomEnchantsIds::POISONOUSCLOUD => ["Poisonous Cloud", "Armor", "Equip", "Rare", 3, ""],
         CustomEnchantsIds::POISONED => ["Poisoned", "Armor", "Damaged", "Uncommon", 5, "Poisons enemy when hit"],
-        CustomEnchantsIds::PORKIFIED => ["Porkified", "Bow", "Shoot", "Mythic", 3, "Shoot pigs"],
         CustomEnchantsIds::PROWL => ["Prowl", "Chestplate", "Equip", "Rare", 1, "Goes invisible when sneaking, gives slowness"],
         CustomEnchantsIds::QUICKENING => ["Quickening", "Tools", "Break", "Uncommon", 5, "Gives speed when block is broken"],
         CustomEnchantsIds::RADAR => ["Radar", "Compass", "Inventory", "Rare", 5, "Points to nearest player in a 50l (l = level) range."],
@@ -223,16 +206,11 @@ class Main extends PluginBase
         CustomEnchantsIds::TELEPATHY => ["Telepathy", "Tools", "Break", "Rare", 1, "Automatically puts drops in inventory."],
         CustomEnchantsIds::VACUUM => ["Vacuum", "Chestplate", "Equip", "Rare", 3, "Suck up items in a 3l radius"],
         CustomEnchantsIds::VAMPIRE => ["Vampire", "Weapons", "Damage", "Uncommon", 1, "Heals by part of damage dealt"],
-        CustomEnchantsIds::VOLLEY => ["Volley", "Bow", "Shoot", "Uncommon", 5, "Shoot multiple arrows in a cone"],
-        CustomEnchantsIds::WITHER => ["Wither", "Weapons", "Damage", "Uncommon", 5, "Gives enemies wither"],
-        CustomEnchantsIds::WITHERSKULL => ["Wither Skull", "Bow", "Shoot", "Mythic", 1, "Shoots Wither Skull"],
-        CustomEnchantsIds::PLACEHOLDER => ["Placeholder", "Bow", "Shoot", "Rare", 1, ""]
+        CustomEnchantsIds::WITHER => ["Wither", "Weapons", "Damage", "Uncommon", 5, "Gives enemies wither"]
     ];
 
     public $incompatibilities = [
-        CustomEnchantsIds::GROW => [CustomEnchantsIds::SHRINK],
-        CustomEnchantsIds::PORKIFIED => [CustomEnchantsIds::BLAZE, CustomEnchantsIds::WITHERSKULL],
-        CustomEnchantsIds::VOLLEY => [CustomEnchantsIds::GRAPPLING]
+        CustomEnchantsIds::GROW => [CustomEnchantsIds::SHRINK]
     ];
 
     public function onEnable()
@@ -266,7 +244,6 @@ class Main extends PluginBase
                 ItemFactory::registerItem(new Item(Item::ENCHANTED_BOOK, 0, "Enchanted Book")); //This is a temporary fix for name being Unknown when given due to no implementation in PMMP. Will remove when implemented in PMMP
             }
             $this->getServer()->getCommandMap()->register("customenchant", new CustomEnchantCommand("customenchant", $this));
-            $this->getServer()->getScheduler()->scheduleRepeatingTask(new AutoAimTask($this), 1);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new CactusTask($this), 10);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new ChickenTask($this), 20);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new ForcefieldTask($this), 1);
@@ -278,7 +255,6 @@ class Main extends PluginBase
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new RadarTask($this), 1);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new SizeTask($this), 20);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new SpiderTask($this), 1);
-            $this->getServer()->getScheduler()->scheduleRepeatingTask(new PoisonousGasTask($this), 1);
             $this->getServer()->getScheduler()->scheduleRepeatingTask(new VacuumTask($this), 1);
             $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
 
@@ -380,9 +356,6 @@ class Main extends PluginBase
                 break;
             case "Weapons":
                 $slot = CustomEnchants::SLOT_SWORD;
-                break;
-            case "Bow":
-                $slot = CustomEnchants::SLOT_BOW;
                 break;
             case "Tools":
                 $slot = CustomEnchants::SLOT_TOOL;
@@ -761,11 +734,6 @@ class Main extends PluginBase
                 break;
             case "Weapons":
                 if ($item->isSword() !== false || $item->isAxe() || $item->getId() == Item::BOW) {
-                    return true;
-                }
-                break;
-            case "Bow":
-                if ($item->getId() == Item::BOW) {
                     return true;
                 }
                 break;
