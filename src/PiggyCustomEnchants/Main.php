@@ -247,7 +247,7 @@ class Main extends PluginBase
      */
     public function isSpoon()
     {
-        if ($this->getServer()->getName() !== "PocketMine-MP") {
+        if ($this->getServer()->getName() !== "Altay") {
             $this->getLogger()->error("Pig doesn't like spoons. Due to this, the plugin will not function until you are using PMMP.");
             return true;
         }
